@@ -1,0 +1,36 @@
+name: Run Go Scraper
+
+on:
+  schedule:
+    - cron: '0 3 * * *'   # Ejecuta todos los días a las 3 AM UTC
+  workflow_dispatch:       # Permite correr manualmente desde GitHub UI
+
+jobs:
+  run-scraper:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'  # O la versión que uses
+
+    - name: Build scraper
+      run: go build -o scraper main.go
+
+    - name: Run scraper
+      run: ./scraper
+
+    # Opcional: guarda los archivos JSON como artefactos para descargarlos después
+    - name: Upload JSON artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: scraped-json
+        path: |
+          peliculas.json
+          series.json
+          toons.json
+          kdramas.json
